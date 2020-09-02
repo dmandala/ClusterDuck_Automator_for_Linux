@@ -1,0 +1,59 @@
+Before you start to install the ESP32 board support package for the Arduino
+IDE and the ClusterDuck-Protocol libraries, you should install some tools
+that are needed for the builder to work correctly:
+
+First install some tools:
+
+**** Someone who uses CentOS and Arch should check these commands below.****
+
+ Ubuntu and Debian:
+
+    Some older versions Ubuntu and Debian are still providing Python 2.7 as
+    the default interpreter but Python version 2 is now obsolete so we need
+    to install Python 3 and it's support packages.  If you already have
+    Python 3 installed this will not hurt anything if you don't it will
+    install it.  Python 3 is recommended and can be installed as follows:
+
+    sudo apt-get install git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util
+
+    pip3 install pyserial
+
+    Making Python 3 the default interpreter is possible, this is a system
+    wide change. Run:
+
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+
+
+ CentOS 7:
+
+    sudo yum install git wget python3 flex bison gperf cmake ninja-build ccache dfu-util
+
+ Arch:
+
+    sudo pacman -S --needed gcc git make flex bison gperf python-pip cmake ninja ccache dfu-util
+
+Most of the ESP32 boards use /dev/ttyUSB* for their serial ports.  You will
+need to have permissions to use the serial ports, on most Linux
+distributions you can enable this by:
+
+Adding user to dialout on Linux
+
+The currently logged user should have read and write access the serial port
+over USB.  On most Linux distributions, this is done by adding the user to
+dialout group with the following commands:
+
+sudo usermod -a -G dialout $USER
+
+on Arch Linux this is done slightly differently by adding the user to uucp
+group with the following command:
+
+sudo usermod -a -G uucp $USER
+
+Next install the board support package for the ESP32 boards
+and then install the ClusterDuck-Protocol libraries by following the
+directions below.
+
+Make sure you log out and re-login to enable read and write permissions for
+the serial port to take effect.  If you do not log out and log back in, you
+will not have access to the serial ports until you do.
+
