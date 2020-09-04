@@ -6,7 +6,7 @@
 # By: David Mandala Designed by THEM, Copyright 2020 all reights reserved
 #     except as licensed by the GPL V2.0 (only) license.
 #
-# Version 0.0.01 2020-09-01 
+# Version 0.0.03 2020-09-04
 #
 # The primary purpose of this script is to validate that the required 
 # Linux and python applications are installed for the ESP32 Arduino IDE
@@ -74,16 +74,22 @@ if_python_version_present() {
 	let "errors_present++";
 	echo "python 3 is needed and python appears not installed at all." 
 	echo "We recomend using your distributions installation tools to install python 3."
+	echo "And make it the default python for your system."
+	echo ""
+	echo "If you are runningn Ubuntu or Debian the below command should make python3"
+	echo "the system default.  Remember after you run the command you must log out and"
+	echo "log back in for it to take effect for you:"
+	echo "sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10"
 	return 1
     else
 	ver=$(python -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/') 
 	if [ "$ver" -lt 35 ]; then
 		let "errors_present++";
     		echo "ClusterDuck-Protocol for the Arduino IDE requires python 3.5 or greater to be installed"
-    		echo "and be the default version in use, proceeding."
+    		echo "and must be the default version in use, proceeding."
     		return 2
 	else
-		echo "python 3.5 or greater is present and is the default python, proceeding."
+		echo "python 3.5 or greater is present and is appears to be the default python, proceeding."
 		return 0
 	fi
     fi
@@ -161,7 +167,18 @@ test_directories_present() {
 	return
 }
 
+if_Arduino_running_exit() {
+	(ps a | grep -v grep | grep -v bash | grep -iq arduino) ; ret=$?
+	if [ $ret = 0 ]; then
+		echo "The Arduino IDE appears to be running, this script can not be run"
+		echo "while the IDE is running, the script will exit now. Please stop the"
+		echo "Arduino IDE and re-run this script"
+		exit 1
+	fi
+}
+
 fixup_Arduino_preferences() {
+	if_Arduino_running_exit
 	# This awk command will add the urls correctly to the preferences file.
 	awk -v key='boardsmanager.additional.urls' -v val='https://dl.espressif.com/dl/package_esp32_index.json,https://adafruit.github.io/arduino-board-index/package_adafruit_index.json' 'BEGIN {
 	   FS=OFS="="
@@ -176,6 +193,11 @@ fixup_Arduino_preferences() {
 	} 1' $ARDUINO_PREFERENCES_FILE > $ARDUINO_PREFERENCES_FILE.new && \
 	mv $ARDUINO_PREFERENCES_FILE $ARDUINO_PREFERENCES_FILE.bak && \
 	mv $ARDUINO_PREFERENCES_FILE.new $ARDUINO_PREFERENCES_FILE
+	echo "We have added the ESP32 URL's to your boardsmanager in the Arduino IDE"
+	echo "when you start the IDE, please make sure to go to 'Tools->Board:->Boards Manager'"
+	echo "and search for and install ESP32."
+	echo""
+	
 }
 
 validate_Arduino_IDE() {
@@ -256,6 +278,9 @@ elif [ $type_of_check = "post" ]; then
 	# Arduino/libraries/ClusterDuck-Protocol/Libraries/RadioLib/README.md
 	# Arduino/libraries/ClusterDuck-Protocol/Libraries/U8g2_Arduino/README.md
 elif [ $type_of_check = "install" ]; then
+	# The Arduino IDE can NOT be running during the install.  We check this several times during the install.
+	if_Arduino_running_exit
+	# Now validate the IDE is present
 	validate_Arduino_IDE ; ret=$?
 	echo "ret = $ret"
 	if [ $ret != 0 ]; then 
@@ -265,7 +290,7 @@ elif [ $type_of_check = "install" ]; then
 	fi 
 	test_software_dependancies ; ret=$?
 	if [ $ret != 0 ]; then 
-		echo "The Linux binary applications must be installed and correct versions, before preoceeding, please correct all noted errors before proceeding"
+		echo "The Linux binary applications must be installed and correct versions, before proceeding, please correct all noted errors before proceeding"
 		echo "If you have all the binaries installed this script is not detecting it and can't proceed any further, exiting now."
 		exit 2
 	fi 
