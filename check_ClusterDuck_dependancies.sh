@@ -292,9 +292,10 @@ elif [ $type_of_check = "install" ]; then
 		echo "The Linux binary applications must be installed and correct versions, before proceeding, please correct all noted errors before proceeding"
 		echo "If you have all the binaries installed this script is not detecting it and can't proceed any further, exiting now."
 		exit 2
-	fi 
+	fi
+	echo
 	echo "About to git clone the ClusterDuck-Protocol libraries into $ARDUINO_LOCAL_LIB_DIR"
-	echo " "
+	echo
 	if_dir_present $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR 0 ; ret=$?
 	if [ $ret = 0 ]; then
 		echo "You appear to have the ClusterDuck-Protocol libraries installed, Exiting Now" 
@@ -302,28 +303,33 @@ elif [ $type_of_check = "install" ]; then
 	fi
 	cd $ARDUINO_LOCAL_LIB_DIR
 	git clone https://github.com/Code-and-Response/ClusterDuck-Protocol.git > /dev/null 2>&1
-	echo "About to git submidule update, the ClusterDuck-Protocol libraries into cd $CDP_INSTALL_DIR"
+	echo
+	echo "About to git submodule update, the ClusterDuck-Protocol libraries into cd $CDP_INSTALL_DIR"
+	echo
 	cd $CDP_INSTALL_DIR
 	git submodule update --init --recursive > /dev/null 2>&1
 	# Now symlink all the directories where they need to be for the Arduino IDE to see them
 	# but keep them in place so git will still work for updates
 	# and finally us -f so that in the future if more dir's pop up they will 
 	# be added.....
+	echo
 	echo "About to symlink the ClusterDuck-Protocol sub libraries from:"
 	echo " $ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR"
 	echo "into"
 	echo "$ARDUINO_LOCAL_LIB_DIR"
-	echo " "
+	echo
 	cd $ARDUINO_LOCAL_LIB_DIR
 	find $CDP_LIB_DIR -maxdepth 1 -mindepth 1 -type d -exec ln -sf {} \;
 	# Now to insert the boardsmanager text into the Arduino preferences.txt file
 	# test that the IDE is not running before doing that.
+	echo
 	echo "About to install the URL's needed for the ESP32 boards in the boards manager setup." 
+	echo
 	fixup_Arduino_preferences
-	echo " "
+	echo
 	echo "At this point, you should the necessary Cluster Duck libraries installed"
 	echo "and ESP32 settings set so you can start developing for Project Owl ClusterDucks"
-	echo " "
+	echo
 	exit 0
 else
 	echo "None of the script options were choosen: pre, post, install"
