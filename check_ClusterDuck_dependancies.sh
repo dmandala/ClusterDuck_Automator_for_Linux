@@ -282,7 +282,6 @@ elif [ $type_of_check = "install" ]; then
 	if_Arduino_running_exit
 	# Now validate the IDE is present
 	validate_Arduino_IDE ; ret=$?
-	echo "ret = $ret"
 	if [ $ret != 0 ]; then 
 		echo "The Arduino IDE must be instlled before preoceeding, if you have not installed the Arduino IDE please do so now."
 		echo "If you have the Arduino IDE instlled this script is not detecting it and can't proceed any further, exiting now."
@@ -295,6 +294,7 @@ elif [ $type_of_check = "install" ]; then
 		exit 2
 	fi 
 	echo "About to git clone the ClusterDuck-Protocol libraries into $ARDUINO_LOCAL_LIB_DIR"
+	echo " "
 	if_dir_present $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR 0 ; ret=$?
 	if [ $ret = 0 ]; then
 		echo "You appear to have the ClusterDuck-Protocol libraries installed, Exiting Now" 
@@ -313,17 +313,17 @@ elif [ $type_of_check = "install" ]; then
 	echo " $ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR"
 	echo "into"
 	echo "$ARDUINO_LOCAL_LIB_DIR"
-	echo ""
+	echo " "
 	cd $ARDUINO_LOCAL_LIB_DIR
 	find $CDP_LIB_DIR -maxdepth 1 -mindepth 1 -type d -exec ln -sf {} \;
 	# Now to insert the boardsmanager text into the Arduino preferences.txt file
 	# test that the IDE is not running before doing that.
 	echo "About to install the URL's needed for the ESP32 boards in the boards manager setup." 
 	fixup_Arduino_preferences
-	echo ""
+	echo " "
 	echo "At this point, you should the necessary Cluster Duck libraries installed"
 	echo "and ESP32 settings set so you can start developing for Project Owl ClusterDucks"
-	echo ""
+	echo " "
 	exit 0
 else
 	echo "None of the script options were choosen: pre, post, install"
