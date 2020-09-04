@@ -14,12 +14,19 @@
 # may not be installed by default.
 #
 # On Ubuntu the Arduino IDE normally makes it's sketch directory in the $USER
-# home directory
+# home directory, this appears to be the case for all Linux installs.
+#
+
+# If Arduino changes the location of this file it will break things
+# and before changing this file you have to make sure that the Arduino
+# IDE is NOT running as it will overwrite the file on shutdown.
+ARDUINO_PREFERENCES_FILE="$HOME/.arduino15/preferences.txt"
 
 ARDUINO_VERSION="1.8.13"
 ARDUINO_APP_DIR="/opt/arduino-$ARDUINO_VERSION"
 ARDUINO_SKETCH_DIR="$HOME/Arduino"
 ARDUINO_LOCAL_LIB_DIR="$ARDUINO_SKETCH_DIR/libraries"
+
 
 CDP_INSTALL_DIR="ClusterDuck-Protocol"
 CDP_LIB_DIR="$CDP_INSTALL_DIR/Libraries"
@@ -114,6 +121,16 @@ if_dir_present() {
     fi
 }
 
+if_file_present() {
+	if [ -f "$1" ]; then
+	    echo "$1 exists."
+	    return 0
+	else 
+	    echo "$1 does not exist."
+	    return 1
+	fi
+}
+
 test_directories_present() {
 	(if_dir_present "$ARDUINO_SKETCH_DIR" 1) ; ret=$?
 	if [ $ret != 0 ]; then
@@ -144,11 +161,39 @@ test_directories_present() {
 	return
 }
 
-validate_Arduino_IDE(){
+fixup_Arduino_preferences() {
+	# This awk command will add the urls correctly to the preferences file.
+	awk -v key='boardsmanager.additional.urls' -v val='https://dl.espressif.com/dl/package_esp32_index.json,https://adafruit.github.io/arduino-board-index/package_adafruit_index.json' 'BEGIN {
+	   FS=OFS="="
+	}
+	$1 == key {
+	   $2 = ($2 ~ /^[[:blank:]]*$/ ? "" : $2 ",") val
+	   p = 1
+	}
+	END {
+	   if (!p)
+	      print key, val
+	} 1' $ARDUINO_PREFERENCES_FILE > $ARDUINO_PREFERENCES_FILE.new && \
+	mv $ARDUINO_PREFERENCES_FILE $ARDUINO_PREFERENCES_FILE.bak && \
+	mv $ARDUINO_PREFERENCES_FILE.new $ARDUINO_PREFERENCES_FILE
+}
+
+validate_Arduino_IDE() {
 	if_present "arduino" "IDE" ; ret=$?
 	if [ $ret = 0 ];then
 		let Ardino_IDE_INSTALLED=1
 		echo "The Arduino IDE appears to be installed, proceeding"
+		if_file_present $ARDUINO_PREFERENCES_FILE ; ret=$?
+		if [ $ret = 0 ]; then
+			echo "It looks like you have run the Arduino IDE at least once since it was installed."
+			echo "The configuration file is present."
+		else
+			echo "It looks like you have not run the Arduino IDE since you installed it"
+			echo "Please start the IDE once, and shut it down so it puts the local"
+			echo "configuration file into your home directory, run the script again"
+			echo "once you have done so."
+			return 1
+		fi
 		return 0
 	else
 		echo "The Arduino IDE does not appear to be installed"
@@ -158,6 +203,8 @@ validate_Arduino_IDE(){
 		echo "We recoemend installing the tar ball in /opt/Arduino-[version number] and then"
 		echo "adding a symlink 'ln -s /opt/Arduino-[version number] /opt/Arduino for each of updating"
 		echo "Then follow the install instructions on the Arduino web site"
+		echo "Once you have completed the install start and exit the IDE once before running this"
+		echo "script again, that will make sure all of the Arduino config files are present."
 		return 1
 	fi
 }
@@ -240,20 +287,9 @@ elif [ $type_of_check = "install" ]; then
 	echo "About to symlink the ClusterDuck-Protocol sub libraries from $ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR into $ARDUINO_LOCAL_LIB_DIR"
 	cd $ARDUINO_LOCAL_LIB_DIR
 	find $CDP_LIB_DIR -maxdepth 1 -mindepth 1 -type d -exec ln -sf {} \;
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/Adafruit_BMP085_Unified
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/Adafruit_Sensor
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/Adafruit_BMP280_Library
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/ArduinoJson
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/arduino-timer
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/AsyncTCP
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/DHT-sensor-library
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/esp8266-oled-ssd1306
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/ESPAsyncWebServer
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/GP2YDustSensor
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/MQSensorsLib
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/pubsubclient
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/RadioLib
-	# ln -s $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR/U8g2_Arduino
+	# Now to insert the boardsmanager text into the Arduino preferences.txt file
+	# test that the IDE is not running before doing that. 
+	fixup_Arduino_preferences
 else
 	echo "None of the script options were choosen: pre, post, install"
 fi
