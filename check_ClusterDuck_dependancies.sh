@@ -327,7 +327,7 @@ elif [ $type_of_check = "install" ]; then
 	echo
 	fixup_Arduino_preferences
 	echo
-	echo "At this point, you should the necessary Cluster Duck libraries installed"
+	echo "At this point, you should have the necessary Cluster Duck libraries installed"
 	echo "and ESP32 settings set so you can start developing for Project Owl ClusterDucks"
 	echo
 	exit 0
