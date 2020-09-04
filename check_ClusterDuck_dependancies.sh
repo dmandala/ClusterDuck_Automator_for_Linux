@@ -301,15 +301,19 @@ elif [ $type_of_check = "install" ]; then
 		exit 3
 	fi
 	cd $ARDUINO_LOCAL_LIB_DIR
-	git clone https://github.com/Code-and-Response/ClusterDuck-Protocol.git > /dev/null
+	git clone https://github.com/Code-and-Response/ClusterDuck-Protocol.git > /dev/null 2>&1
 	echo "About to git submidule update, the ClusterDuck-Protocol libraries into cd $CDP_INSTALL_DIR"
 	cd $CDP_INSTALL_DIR
-	git submodule update --init --recursive > /dev/null
+	git submodule update --init --recursive > /dev/null 2>&1
 	# Now symlink all the directories where they need to be for the Arduino IDE to see them
 	# but keep them in place so git will still work for updates
 	# and finally us -f so that in the future if more dir's pop up they will 
 	# be added.....
-	echo "About to symlink the ClusterDuck-Protocol sub libraries from $ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR into $ARDUINO_LOCAL_LIB_DIR"
+	echo "About to symlink the ClusterDuck-Protocol sub libraries from:"
+	echo " $ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR"
+	echo "into"
+	echo "$ARDUINO_LOCAL_LIB_DIR"
+	echo ""
 	cd $ARDUINO_LOCAL_LIB_DIR
 	find $CDP_LIB_DIR -maxdepth 1 -mindepth 1 -type d -exec ln -sf {} \;
 	# Now to insert the boardsmanager text into the Arduino preferences.txt file
