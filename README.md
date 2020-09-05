@@ -49,24 +49,24 @@ This guide will help you successfully get a Linux development environment up and
 	**Note:**You must logout of your account and back in for this to take effect, you should do so now before proceeding with the rest of the instructions.
 
 ### Install and run ClusterDuck_Automator_for_Linux
-1. Next install the ClusterDuck_Automator_for_Linux script.  
+1. Next install the ClusterDuck_Automator_for_Linux script. The git clone will install the check_ClusterDuck_dependencies bash script.  The first time it's run it will create the install_ClusterDuck_libraries bash script. Just some script magic to make it clear what to run to check things and to install things. Eventually it might even have a update_ClusterDuck_libraries script but not today.  Eventually the script will exist somewhere within the Project Owl repositories but for now.
 	
-	`git clone <CDP URL>`
+	`git clone git@github.com:dmandala/ClusterDuck_Automator_for_Linux.git`
 
 2. Now you need to run the script. It should be executable, but it it's not you can solve this by doing:
 
-	`chmod u+x check_ClusterDuck_dependancies.sh`
+	`chmod u+x check_ClusterDuck_dependencies`
 
  	Once you have done that run the script in a terminal by: 
 	
-	`./check_ClusterDuck_dependancies.sh`
+	`./check_ClusterDuck_dependencies`
 	
  	The output will tell you if you have a clean environment with all the necessary pieces in place. Resolve any missing software errors by installing them using your distro's tools.  Once that is done you can now proceed to the install of the ClusterDuck-Protocol libraries.
 
 ### Install ClusterDuck-Protocol libraries
-1. To install run the script again but with install behind it like this: 
+1. To install run the script install_ClusterDuck_libraries like this: 
 
-	`./check_ClusterDuck_dependancies.sh install`
+	`./install_ClusterDuck_libraries`
 
-2.  You should then see that the script will clone the latest CDP down and set up all necessary libraries in the proper places. Once that has completed you are now ready to use the Clusterduck Protocol libraries and flash some ducks.
+2.  The script will clone the latest CDP down and set up all necessary libraries in the proper places. Once that has completed you are now ready to use the Clusterduck Protocol libraries and flash some ducks.
 

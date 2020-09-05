@@ -1,17 +1,18 @@
 #!/bin/bash
 #
 # This script checks to make sure that required dependieces are installed
-# for the Project Owl ClusterDuck-Prototcol Arduino IDE build system
+# for the Project Owl ClusterDuck-Prototcol (CDP) Arduino IDE build system
 #
 # By: David Mandala Designed by THEM, Copyright 2020 all reights reserved
 #     except as licensed by the GPL V2.0 (only) license.
 #
-# Version 0.0.03 2020-09-04
+# Version 0.0.04 2020-09-04
 #
 # The primary purpose of this script is to validate that the required 
 # Linux and python applications are installed for the ESP32 Arduino IDE
 # build system.  They differ from the normal Arduino IDE build system and 
-# may not be installed by default.
+# may not be installed by default.  The script will install the CDP libraries 
+# where they belong.
 #
 # On Ubuntu the Arduino IDE normally makes it's sketch directory in the $USER
 # home directory, this appears to be the case for all Linux installs.
@@ -20,6 +21,18 @@
 # If Arduino changes the location of this file it will break things
 # and before changing this file you have to make sure that the Arduino
 # IDE is NOT running as it will overwrite the file on shutdown.
+#
+# This script is sensitive to it's name, if it is called by 
+# check_ClusterDuck_dependencies.sh it will check dependencies, 
+# if called by install_ClusterDuck_libraries it will install
+# the CDP libraries if it can.
+#
+
+# need to fix this incorrectly spelled file names look stupid
+#CHECK_FILE_NAME="check_ClusterDuck_dependencies.sh"
+CHECK_FILE_NAME="check_ClusterDuck_dependancies.sh"
+INSTALL_FILE_NAME="install_ClusterDuck_libraries"
+
 ARDUINO_PREFERENCES_FILE="$HOME/.arduino15/preferences.txt"
 
 ARDUINO_VERSION="1.8.13"
@@ -234,10 +247,21 @@ validate_Arduino_IDE() {
 #
 # Everything above this line should be functions and global var's  Everything below this line should be the program code
 
-if  [[ $# -eq 0 ]] ; then
+application_name="${0,,}"
+application_name="${application_name##*/}"
+
+# first see if $INSTALL_FILE_NAME exists in this directory, if not run ln and make a hard linked file
+if [ ! -f "$INSTALL_FILE_NAME" ]; then
+	ln $CHECK_FILE_NAME $INSTALL_FILE_NAME
+fi
+
+if  [[ $application_name = "check_clusterduck_dependancies.sh"  &&  $# -eq 0 ]] ; then
 	# set this to help when there is a help section.
 	type_of_check="pre"
-else
+elif [[ $application_name = "install_clusterduck_libraries"  &&  $# -eq 0 ]] ; then
+	# if the name is install_CD_libraries then set install
+	type_of_check="install"
+elif  [[ $# -eq 1 ]] ; then
 	#lower case the incoming command line var
 	type_of_check="${1,,}"
 fi
@@ -255,6 +279,7 @@ elif [ $type_of_check = "pre" ]; then
 	test_directories_present
 elif [ $type_of_check = "post" ]; then
 	# check if everything is installed or report out what is missing
+	# this really should run git pull!!!
 	#if_present "arduino" "IDE" ; ret=$?
 	validate_Arduino_IDE ; ret=$?
 	test_software_dependancies
