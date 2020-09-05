@@ -34,7 +34,7 @@ This guide will help you successfully get a Linux development environment up and
 		
 	`update-alternatives --install /usr/bin/python python /usr/bin/python3 10`
 
- 	**Note:**You must logout of your account and back in for this to take effect, however wait until you run the next command as it also requires logging out and back in to take effect.
+	__Note:__ You must logout of your account and back in for this to take effect, however wait until you run the next command as it also requires logging out and back in to take effect.
 
 4. You may need to add your user to dialout on Linux
 
@@ -46,7 +46,7 @@ This guide will help you successfully get a Linux development environment up and
 
 	`sudo usermod -a -G uucp $USER`
 
-	**Note:**You must logout of your account and back in for this to take effect, you should do so now before proceeding with the rest of the instructions.
+	**Note:** You must logout of your account and back in for this to take effect, you should do so now before proceeding with the rest of the instructions.
 
 ### Install and run ClusterDuck_Automator_for_Linux
 1. Next install the ClusterDuck_Automator_for_Linux script. The git clone will install the check_ClusterDuck_dependencies bash script.  The first time it's run it will create the install_ClusterDuck_libraries bash script. Just some script magic to make it clear what to run to check things and to install things. Eventually it might even have a update_ClusterDuck_libraries script but not today.  Eventually the script will exist somewhere within the Project Owl repositories but for now.
@@ -61,7 +61,7 @@ This guide will help you successfully get a Linux development environment up and
 	
 	`./check_ClusterDuck_dependencies`
 	
- 	The output will tell you if you have a clean environment with all the necessary pieces in place. Resolve any missing software errors by installing them using your distro's tools.  Once that is done you can now proceed to the install of the ClusterDuck-Protocol libraries.
+	The output will tell you if you have a clean environment with all the necessary pieces in place. Resolve any missing software errors by installing them using your distro's tools.  Once that is done you can now proceed to the install of the ClusterDuck-Protocol libraries.
 
 ### Install ClusterDuck-Protocol libraries
 1. To install run the script install_ClusterDuck_libraries like this: 
