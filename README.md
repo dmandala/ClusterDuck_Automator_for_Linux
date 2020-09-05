@@ -1,13 +1,13 @@
 # ClusterDuck_Automator_for_Linux
 
-The script will validate if you have all the Linux binaries installed to work on the Project Owl Cluster Ducks with the Arduino IDE.  Once you have all the necessary binaries installed, you can then use the script to install the CluserDuck libraries (CDP) needed for development.
+The script will validate if you have all the Linux binaries installed to work on the Project Owl Cluster Ducks with the Arduino IDE.  Once you have all the necessary binaries installed, you can then use the script to install the ClusterDuck libraries (CDP) needed for development.
 
-This guide will help you successfully get a Linux development environment up and running for Project Owl ClusterDucks.  Please note the author of the document and the script knows how to use Debian and Ubuntuor and some of the derivities.  So the code sections are by default approprate for the apt tool set.  If you use a different distrobution please send patches with the correct methods for other distrobutions and I will include them in future versions of this document and script.  I hope this helps make developing for Project Owl Ducks easier.  Thank you for your support.   
+This guide will help you successfully get a Linux development environment up and running for Project Owl ClusterDucks.  Please note the author of the document and the script knows how to use Debian and Ubuntu and some of the derivatives.  So the code sections are by default appropriate for the apt tool set.  If you use a different distribution please send patches with the correct methods for other distributions and I will include them in future versions of this document and script.  I hope this helps make developing for Project Owl Ducks easier.  Thank you for your support.   
  
 ## Preferred method of setup (Script Install):
 
 ### Install the Arduino IDE
-1. First please get Arduino IDE Installed.  We recomend the tar-ball installation method, please follow the instructions provided by the Arduino folks, they are pretty good.  They have two scripts to be run that will pretty much install the Arduino IDE on almost every version of Linux.  We do recomend installing into:
+1. First please get Arduino IDE Installed.  We recommend the tar-ball installation method, please follow the instructions provided by the Arduino folks, they are pretty good.  They have two scripts to be run that will pretty much install the Arduino IDE on almost every version of Linux.  We do recommend installing into:
 
 		`/opt/Arduino-(version number)`
 	
@@ -30,7 +30,7 @@ This guide will help you successfully get a Linux development environment up and
 		`update-alternatives --install /usr/bin/python python /usr/bin/python3 10`
 	Note:You must logout of your account and back in for this to take effect
 
-3. You will need to install the pySerial module, a dependency for CDP.  If you are running Debian or Ubuntu or one of the derivities you can do this by running the following in your terminal:
+3. You will need to install the pySerial module, a dependency for CDP.  If you are running Debian or Ubuntu or one of the derivatives. you can do this by running the following in your terminal:
 		
 		`pip3 install pyserial`
 
@@ -39,7 +39,7 @@ This guide will help you successfully get a Linux development environment up and
 	
 	`git clone <CDP URL>`
 
-2. Now you need to run the script. It should be executable, but it it's notyou can solve this by doing:
+2. Now you need to run the script. It should be executable, but it it's not you can solve this by doing:
 
 		`chmod u+x check_ClusterDuck_dependancies.sh`
 
