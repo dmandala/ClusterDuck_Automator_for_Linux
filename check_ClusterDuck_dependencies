@@ -23,14 +23,12 @@
 # IDE is NOT running as it will overwrite the file on shutdown.
 #
 # This script is sensitive to it's name, if it is called by 
-# check_ClusterDuck_dependencies.sh it will check dependencies, 
+# check_ClusterDuck_dependencies it will check dependencies, 
 # if called by install_ClusterDuck_libraries it will install
 # the CDP libraries if it can.
 #
 
-# need to fix this incorrectly spelled file names look stupid
-#CHECK_FILE_NAME="check_ClusterDuck_dependencies.sh"
-CHECK_FILE_NAME="check_ClusterDuck_dependancies.sh"
+CHECK_FILE_NAME="check_ClusterDuck_dependencies"
 INSTALL_FILE_NAME="install_ClusterDuck_libraries"
 
 ARDUINO_PREFERENCES_FILE="$HOME/.arduino15/preferences.txt"
