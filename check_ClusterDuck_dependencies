@@ -8,10 +8,10 @@
 #
 # Version 0.0.04 2020-09-04
 #
-# The primary purpose of this script is to validate that the required 
+# The primary purpose of this script is to validate that the required
 # Linux and python applications are installed for the ESP32 Arduino IDE
-# build system.  They differ from the normal Arduino IDE build system and 
-# may not be installed by default.  The script will install the CDP libraries 
+# build system.  They differ from the normal Arduino IDE build system and
+# may not be installed by default.  The script will install the CDP libraries
 # where they belong.
 #
 # On Ubuntu the Arduino IDE normally makes it's sketch directory in the $USER
@@ -22,15 +22,13 @@
 # and before changing this file you have to make sure that the Arduino
 # IDE is NOT running as it will overwrite the file on shutdown.
 #
-# This script is sensitive to it's name, if it is called by 
-# check_ClusterDuck_dependencies.sh it will check dependencies, 
+# This script is sensitive to it's name, if it is called by
+# check_ClusterDuck_dependencies it will check dependencies,
 # if called by install_ClusterDuck_libraries it will install
 # the CDP libraries if it can.
 #
 
-# need to fix this incorrectly spelled file names look stupid
-#CHECK_FILE_NAME="check_ClusterDuck_dependencies.sh"
-CHECK_FILE_NAME="check_ClusterDuck_dependancies.sh"
+CHECK_FILE_NAME="check_ClusterDuck_dependencies"
 INSTALL_FILE_NAME="install_ClusterDuck_libraries"
 
 ARDUINO_PREFERENCES_FILE="$HOME/.arduino15/preferences.txt"
@@ -51,7 +49,7 @@ declare -i errors_present=0;
 declare type_of_check="pre"
 
 if_present() {
-    if  !  which $1 > /dev/null ; then 
+    if  !  which $1 > /dev/null ; then
 	((++errors_present))
 	return 1
     else
@@ -60,7 +58,7 @@ if_present() {
 }
 
 if_present_binary() {
-    if  !  which $1 > /dev/null ; then 
+    if  !  which $1 > /dev/null ; then
 	((++errors_present))
 	echo "$1 appears to be missing, we recomend using your distributions installation tools to install $1."
 	return 1
@@ -84,7 +82,7 @@ if_python_file_present() {
 if_python_version_present() {
     if ! which python > /dev/null ; then
 	let "errors_present++";
-	echo "python 3 is needed and python appears not installed at all." 
+	echo "python 3 is needed and python appears not installed at all."
 	echo "We recomend using your distributions installation tools to install python 3."
 	echo "And make it the default python for your system."
 	echo ""
@@ -94,7 +92,7 @@ if_python_version_present() {
 	echo "sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10"
 	return 1
     else
-	ver=$(python -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/') 
+	ver=$(python -V 2>&1 | sed 's/.* \([0-9]\).\([0-9]\).*/\1\2/')
 	if [ "$ver" -lt 35 ]; then
 		let "errors_present++";
     		echo "ClusterDuck-Protocol for the Arduino IDE requires python 3.5 or greater to be installed"
@@ -109,7 +107,7 @@ if_python_version_present() {
 
 test_software_dependancies() {
 	if_present_binary "git" ; ret=$?
-	if_present_binary "wget" ; ret=$?	
+	if_present_binary "wget" ; ret=$?
 	if_python_version_present ; ret=$?
 	if_present_binary "pip3" ; ret=$?
 	if_python_file_present "pyserial" ; ret=$?
@@ -118,7 +116,7 @@ test_software_dependancies() {
 
 if_dir_present() {
     verbose=$2
-    if [ -d "$1/" ]; then 
+    if [ -d "$1/" ]; then
 	if [ -L "$1" ]; then
     		# It is a symlink!
 		if [ verbose = 1 ]; then
@@ -143,7 +141,7 @@ if_file_present() {
 	if [ -f "$1" ]; then
 	    echo "$1 exists."
 	    return 0
-	else 
+	else
 	    echo "$1 does not exist."
 	    return 1
 	fi
@@ -164,7 +162,7 @@ test_directories_present() {
 	if_dir_present $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR 1 ; ret=$?
 	if [ $ret != 0 ]; then
 		if [ $CDP_INSTALLED = 0 ]; then
-			echo "You don't appear to have the ClusterDuck-Protocol libraries installed," 
+			echo "You don't appear to have the ClusterDuck-Protocol libraries installed,"
 			echo "$ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR will be created when you install it."
 		fi
 	fi
@@ -172,7 +170,7 @@ test_directories_present() {
 	if_dir_present $ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR 1 ; ret=$?
 	if [ $ret != 0 ]; then
 		if [ $CDP_INSTALLED = 0 ]; then
-			echo "You don't appear to have the ClusterDuck-Protocol libraries installed," 
+			echo "You don't appear to have the ClusterDuck-Protocol libraries installed,"
 			echo "$ARDUINO_LOCAL_LIB_DIR/$CDP_LIB_DIR will be created when you install it."
 		fi
 	fi
@@ -233,7 +231,7 @@ validate_Arduino_IDE() {
 	else
 		echo "The Arduino IDE does not appear to be installed"
 		echo "We recomend instlling the Arduino IDE from tar ball and not use the Online Web Editor."
-		echo "You can get the installation tar ball from: https://www.arduino.cc/en/Main/Software" 
+		echo "You can get the installation tar ball from: https://www.arduino.cc/en/Main/Software"
 		echo "Choose the corect Linux version for your distro, 32 or 64 bit X86 or ARM"
 		echo "We recoemend installing the tar ball in /opt/Arduino-[version number] and then"
 		echo "adding a symlink 'ln -s /opt/Arduino-[version number] /opt/Arduino for each of updating"
@@ -255,7 +253,7 @@ if [ ! -f "$INSTALL_FILE_NAME" ]; then
 	ln $CHECK_FILE_NAME $INSTALL_FILE_NAME
 fi
 
-if  [[ $application_name = "check_clusterduck_dependancies.sh"  &&  $# -eq 0 ]] ; then
+if  [[ $application_name = "check_clusterduck_dependencies"  &&  $# -eq 0 ]] ; then
 	# set this to help when there is a help section.
 	type_of_check="pre"
 elif [[ $application_name = "install_clusterduck_libraries"  &&  $# -eq 0 ]] ; then
@@ -286,7 +284,7 @@ elif [ $type_of_check = "post" ]; then
 	echo  "test for librarys installed here, test not written yet."
 	# would be nice if someone would wrote this test.
 	# soemthing like find $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR -maxdepth 2 -name README.md if find empty; libs not populated
-	# in the 14 libraries installed in the ClusterDuck-Protocol the only file that seems consistantly present is README.md for 
+	# in the 14 libraries installed in the ClusterDuck-Protocol the only file that seems consistantly present is README.md for
 	# testing, if the directory is present but not populated the git clone was executed but not the git submodule update!
 	# Arduino/libraries/ClusterDuck-Protocol/Libraries/Adafruit_BMP085_Unified/README.md
 	# Arduino/libraries/ClusterDuck-Protocol/Libraries/Adafruit_Sensor/README.md
@@ -307,13 +305,13 @@ elif [ $type_of_check = "install" ]; then
 	if_Arduino_running_exit
 	# Now validate the IDE is present
 	validate_Arduino_IDE ; ret=$?
-	if [ $ret != 0 ]; then 
+	if [ $ret != 0 ]; then
 		echo "The Arduino IDE must be instlled before preoceeding, if you have not installed the Arduino IDE please do so now."
 		echo "If you have the Arduino IDE instlled this script is not detecting it and can't proceed any further, exiting now."
 		exit 1
-	fi 
+	fi
 	test_software_dependancies ; ret=$?
-	if [ $ret != 0 ]; then 
+	if [ $ret != 0 ]; then
 		echo "The Linux binary applications must be installed and correct versions, before proceeding, please correct all noted errors before proceeding"
 		echo "If you have all the binaries installed this script is not detecting it and can't proceed any further, exiting now."
 		exit 2
@@ -323,7 +321,7 @@ elif [ $type_of_check = "install" ]; then
 	echo
 	if_dir_present $ARDUINO_LOCAL_LIB_DIR/$CDP_INSTALL_DIR 0 ; ret=$?
 	if [ $ret = 0 ]; then
-		echo "You appear to have the ClusterDuck-Protocol libraries installed, Exiting Now" 
+		echo "You appear to have the ClusterDuck-Protocol libraries installed, Exiting Now"
 		exit 3
 	fi
 	cd $ARDUINO_LOCAL_LIB_DIR
@@ -335,7 +333,7 @@ elif [ $type_of_check = "install" ]; then
 	git submodule update --init --recursive > /dev/null 2>&1
 	# Now symlink all the directories where they need to be for the Arduino IDE to see them
 	# but keep them in place so git will still work for updates
-	# and finally us -f so that in the future if more dir's pop up they will 
+	# and finally us -f so that in the future if more dir's pop up they will
 	# be added.....
 	echo
 	echo "About to symlink the ClusterDuck-Protocol sub libraries from:"
@@ -348,7 +346,7 @@ elif [ $type_of_check = "install" ]; then
 	# Now to insert the boardsmanager text into the Arduino preferences.txt file
 	# test that the IDE is not running before doing that.
 	echo
-	echo "About to install the URL's needed for the ESP32 boards in the boards manager setup." 
+	echo "About to install the URL's needed for the ESP32 boards in the boards manager setup."
 	echo
 	fixup_Arduino_preferences
 	echo
